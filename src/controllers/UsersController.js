@@ -1,6 +1,10 @@
 const  userModel = require("../models/UsersModel.js")
 const bcrypt = require("bcrypt")
-const mailUtil = require("../utils/MailUtil")
+const mailUtil = require("../utils/MailUtil");
+const { JsonWebTokenError } = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
+
+const secret = "secret";
 
 const getUserData = async(req,res)=>{
 
@@ -120,6 +124,51 @@ const getUserById = async(req,res)=>{
     })
 }
 
+const forgotPassword = async(req,res) =>{
+
+    const email = req.body.email;
+    const foundUser  = await userModel.findOne({email : email});
+
+    if(foundUser != null) {
+
+       const token = jwt.sign(foundUser.toObject(),secret);
+       console.log(token);
+       const url = `http://localhost:5173/resetPassword/${token}`;
+       const mailContent = `<html>
+                               <a href="${url}">Reset Password</a>   
+                            </html>` ;
+       
+       await mailUtil.forgotSendingMail(foundUser.email, "reset password" , mailContent);
+       res.status(200).json({
+        message:"reset password link sent to your mail"
+       }); 
+
+    }else {
+        res.status(404).json({
+            message:"Email not found..."
+        });
+    }
+}
+
+const resetPassword = async(req,res)=>{
+    const token = req.body.token;
+    const newPassword = req.body.password;
+
+    const userFromToken = jwt.verify(token,secret);
+
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(newPassword,salt)
+
+    const updateUser = await userModel.findByIdAndUpdate(userFromToken._id, {
+        password:hashedPassword,
+    });
+    res.json({
+        message:"password updated successfully.."
+    });
+
+}
+
 module.exports = {
-    getUserData,addUser,deleteUser,getUserById,loginUser,signup
+    getUserData,addUser,deleteUser,getUserById,loginUser,signup,forgotPassword,resetPassword
 }

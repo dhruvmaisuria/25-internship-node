@@ -8,5 +8,8 @@ routes.delete("/appointment/:id",appointmentController.deleteAppointment);
 routes.get("/appointmentByUserId/:userId",appointmentController.getAllAppointmentsByUserId);
 routes.put("/updateAppointment/:id",appointmentController.updateAppointment);
 routes.get("/getAppointmentById/:id",appointmentController.getAppointmentById);
+routes.get("/appointmentByLawyerId/:lawyerId",appointmentController.getAllAppointmentsByLawyerId);
+routes.put("/updateAppointmentStatus/:id",appointmentController.updateAppointmentStatus);
+
 
 module.exports = routes

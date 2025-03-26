@@ -152,6 +152,25 @@ const getLawyerById = async(req,res)=>{
     })
 }
 
+
+const getLawyersBySpecialization = async (req, res) => {
+    try {
+      const { specialization } = req.params;
+      const foundLawyers = await LawyerModel.find({ specialization });
+  
+      if (foundLawyers.length === 0) {
+        return res.status(404).json({ message: "No lawyers found" });
+      }
+  
+      res.status(200).json({
+        message: "Lawyers fetched successfully",
+        data: foundLawyers,
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Error fetching lawyers", error: err });
+    }
+  };
+
 module.exports = {
-    getLawyerData,deleteLawyer,getLawyerById,lawyerLogin,signupLawyer,signupLawyerWithFile
+    getLawyerData,deleteLawyer,getLawyerById,lawyerLogin,signupLawyer,signupLawyerWithFile,getLawyersBySpecialization
 }   

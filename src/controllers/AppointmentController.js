@@ -1,5 +1,6 @@
 const AppointmentModel = require("../models/AppointmentModel");
 const appointmentModel = require("../models/AppointmentModel");
+const LawyerModel = require("../models/LawyerModel");
 
 // const addAppointment = async(req,res) =>{
 
@@ -58,15 +59,40 @@ const addAppointment = async (req, res) => {
 
    }
 
-   const deleteAppointment = async(req,res)=>{
+  //  const deleteAppointment = async(req,res)=>{
    
-       const deletedAppointment = await appointmentModel.findByIdAndDelete(req.params.id)
+  //      const deletedAppointment = await appointmentModel.findByIdAndDelete(req.params.id)
    
-       res.json({
-           message:"Appointment deleted successfully.... ",
-           data:deletedAppointment
-       })
-   }
+  //      res.json({
+  //          message:"Appointment deleted successfully.... ",
+  //          data:deletedAppointment
+  //      })
+  //  }
+
+  const deleteAppointment = async (req, res) => {
+    try {
+        const appointment = await appointmentModel.findById(req.params.id);
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found!" });
+        }
+
+        // Delete the appointment
+        await appointmentModel.findByIdAndDelete(req.params.id);
+
+        // Remove appointment from lawyer's list
+        await LawyerModel.updateOne(
+            { _id: appointment.lawyerId },
+            { $pull: { appointments: req.params.id } }
+        );
+
+        res.json({ message: "Appointment deleted successfully!" });
+    } catch (error) {
+        console.error("Error deleting appointment:", error);
+        res.status(500).json({ message: "Server error!" });
+    }
+};
+
+
    
    const getAllAppointmentsByUserId = async (req, res) => {
   
@@ -106,26 +132,71 @@ const addAppointment = async (req, res) => {
     }
   }
 
-   const updateAppointment = async(req,res) => {
-     try{
+  //  const updateAppointment = async(req,res) => {
+  //    try{
 
-      const updatedAppointment = await appointmentModel.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
-      res.status(200).json({
-        message: "Appointment updated successfully",
-        data: updatedAppointment,
-      });
+  //     const updatedAppointment = await appointmentModel.findByIdAndUpdate(
+  //       req.params.id,
+  //       req.body,
+  //       { new: true }
+  //     );
+  //     res.status(200).json({
+  //       message: "Appointment updated successfully",
+  //       data: updatedAppointment,
+  //     });
 
-     }catch(err) {
-      res.status(500).json({
-      message: "error while update Appointment",
-      err: err,
-      });
+  //    }catch(err) {
+  //     res.status(500).json({
+  //     message: "error while update Appointment",
+  //     err: err,
+  //     });
+  //   }
+  // }
+
+  const updateAppointment = async (req, res) => {
+    try {
+        // Fetch the existing appointment
+        const appointment = await appointmentModel.findById(req.params.id);
+
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+
+        // Prevent updates if the appointment is already accepted or rejected
+        if (appointment.status !== "Pending") {
+            return res.status(400).json({ message: "Cannot update an accepted or rejected appointment." });
+        }
+
+        // Prevent changing the lawyer after appointment confirmation
+        if (req.body.lawyerId && req.body.lawyerId !== appointment.lawyerId) {
+            return res.status(400).json({ message: "Cannot change lawyer after confirmation." });
+        }
+
+
+        // Update appointment
+        const { appointmentDate, appointmentTime, consultationType, paymentStatus } = req.body;
+
+        const updatedFields = { appointmentDate, appointmentTime, consultationType, paymentStatus };  
+
+        const updatedAppointment = await appointmentModel.findByIdAndUpdate(
+            req.params.id,
+            updatedFields,
+            { new: true }
+        );
+
+        res.status(200).json({
+            message: "Appointment updated successfully",
+            data: updatedAppointment,
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: "Error while updating appointment",
+            error: err.message,
+        });
     }
-  }
+};
+
    
   const getAppointmentById= async(req,res)=>{
     try {

@@ -27,16 +27,16 @@ const forgotSendingMail = async(to,subject,text) =>{
     const transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
-            user:"toxicfreefire3010@gmail.com",
-            pass:"kzaw dupa kkhl jdhz"
+            user:"veerraar325@gmail.com",
+            pass:"cxro obte apmi dmsm"
         }
     })
 
     const mailOptions = {
-        from: 'toxicfreefire3010@gmail.com',
+        from: 'veeraar325@gmail.com',
         to: to,
         subject: subject,
-        html: text
+        html:text
     }
 
     const mailResponse = await transporter.sendMail(mailOptions);
@@ -44,6 +44,8 @@ const forgotSendingMail = async(to,subject,text) =>{
     return mailResponse;
 }
 
+
+
 module.exports = {
-    sendingMail,forgotSendingMail
+    sendingMail,forgotSendingMail,
 }

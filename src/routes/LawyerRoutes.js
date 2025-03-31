@@ -9,5 +9,8 @@ routes.post("/lawyerLogin",lawyerController.lawyerLogin)
 routes.delete("/lawyer/:id",lawyerController.deleteLawyer)
 routes.get("/lawyer/:id",lawyerController.getLawyerById)
 routes.get("/lawyers/:specialization",lawyerController.getLawyersBySpecialization)
+routes.post("/lawyer/forgotPassword",lawyerController.forgotPassword)
+routes.post("/lawyer/resetPassword",lawyerController.resetPassword)
+
 
 module.exports = routes 

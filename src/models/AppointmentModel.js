@@ -12,7 +12,7 @@ const appointmentSchema = new Schema({
     lawyerId:{
         type:Schema.Types.ObjectId,
         ref:'lawyers',
-        // required:true
+        required:true
     },
     problemCategory:{
         enum:["Civil", "Criminal", "Corporate", "Family", "Real Estate", "Intellectual Property", "Tax", "Employment"],

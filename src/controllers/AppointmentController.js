@@ -1,6 +1,7 @@
-const AppointmentModel = require("../models/AppointmentModel");
+
 const appointmentModel = require("../models/AppointmentModel");
 const LawyerModel = require("../models/LawyerModel");
+const mailUtil = require("../utils/MailUtil")
 
 // const addAppointment = async(req,res) =>{
 
@@ -215,33 +216,99 @@ const addAppointment = async (req, res) => {
   }
 
 
+  // const updateAppointmentStatus = async (req, res) => {
+  //   try {
+  //     const { id } = req.params; // Appointment ID
+  //     const { status } = req.body; // "Confirmed" or "Rejected"
+  
+  //     if (!["Confirmed", "Rejected"].includes(status)) {
+  //       return res.status(400).json({ message: "Invalid status update" });
+  //     }
+  
+  //     const updatedAppointment = await appointmentModel.findByIdAndUpdate(
+  //       id,
+  //       { status },
+  //       { new: true }
+  //     );
+  
+  //     if (!updatedAppointment) {
+  //       return res.status(404).json({ message: "Appointment not found" });
+  //     }
+  
+  //     res.status(200).json({
+  //       message: `Appointment ${status} successfully`,
+  //       data: updatedAppointment,
+  //     });
+  //   } catch (err) {
+  //     res.status(500).json({ message: "Error updating appointment status", error: err.message });
+  //   }
+  // };
+
+
+
   const updateAppointmentStatus = async (req, res) => {
     try {
-      const { id } = req.params; // Appointment ID
-      const { status } = req.body; // "Confirmed" or "Rejected"
-  
-      if (!["Confirmed", "Rejected"].includes(status)) {
-        return res.status(400).json({ message: "Invalid status update" });
-      }
-  
-      const updatedAppointment = await appointmentModel.findByIdAndUpdate(
-        id,
-        { status },
-        { new: true }
-      );
-  
-      if (!updatedAppointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-  
-      res.status(200).json({
-        message: `Appointment ${status} successfully`,
-        data: updatedAppointment,
-      });
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!["Confirmed", "Rejected"].includes(status)) {
+            return res.status(400).json({ message: "Invalid status update" });
+        }
+
+        const appointment = await appointmentModel.findById(id).populate("userId");
+
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+
+        // Predefined Zoom Meeting Link
+        const zoomLink = "https://us02web.zoom.us/j/8611936318?pwd=cTlFTkRHQjZaLzYzQlRZTzkrSHBaUT09";
+
+        // Update appointment status
+        appointment.status = status;
+        if (status === "Confirmed") {
+            appointment.zoomLink = zoomLink; // Store Zoom link in DB
+        } else {
+            appointment.zoomLink = ""; // Remove Zoom link if rejected
+        }
+        await appointment.save();
+
+        // Ensure user exists and has an email
+        const user = appointment.userId;
+        console.log(user)
+        if (!user || !user.email) {
+            return res.status(400).json({ message: "User details not found for email notification." });
+        }
+        
+
+        // Prepare email details
+        let subject, message;
+        if (status === "Confirmed") {
+            subject = "Appointment Confirmed";
+            message = `Dear ${user.firstName} ${user.lastName} ,\n\nYour appointment has been confirmed.\nHere is your Zoom link: ${zoomLink}\n\nBest Regards,\nLegal Consultation Marketplace Team`;
+        } else {
+            subject = "Appointment Rejected";
+            message = `Dear ${user.firstName} ${user.lastName} ,\n\nWe regret to inform you that your appointment request has been rejected.\n\nBest Regards,\nLegal Consultation Marketplace Team`;
+        }
+
+        // Send Email Notification
+        try {
+            await mailUtil.sendingMail(user.email, subject, message);
+        } catch (emailError) {
+            return res.status(500).json({ message: "Appointment updated, but email notification failed.", error: emailError.message });
+        }
+
+        res.status(200).json({
+            message: `Appointment ${status} successfully updated and email sent.`,
+            data: appointment,
+        });
+
     } catch (err) {
-      res.status(500).json({ message: "Error updating appointment status", error: err.message });
+        res.status(500).json({ message: "Error updating appointment status", error: err.message });
     }
-  };
+};
+
+
   
 module.exports = {
     addAppointment,getAllAppointment,deleteAppointment,getAllAppointmentsByUserId,updateAppointment,getAppointmentById,getAllAppointmentsByLawyerId,updateAppointmentStatus

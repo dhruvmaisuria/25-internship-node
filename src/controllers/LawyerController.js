@@ -126,6 +126,9 @@ const signupLawyerWithFile = async(req,res) => {
             const hashedPassword = bcrypt.hashSync(req.body.password, salt);
             req.body.password = hashedPassword;
 
+            req.body.rating = 0;
+            req.body.ratingCount = 0;
+
             const savedLawyer = await LawyerModel.create(req.body);
             await mailUtil.sendingMail(savedLawyer.email,"welcome to Legal Consultant MarketPlace","this is welcome mail")
 

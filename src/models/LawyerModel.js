@@ -26,7 +26,12 @@ const lawyersSchema = new Schema({
     },
     rating:{
         type:Number,
+        default:0,
     },
+    ratingCount:{
+        type: Number,
+        default: 0 
+    }, 
     roleId:{
         type:Schema.Types.ObjectId,
         ref:"roles"

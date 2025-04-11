@@ -3,6 +3,7 @@ const appointmentModel = require("../models/AppointmentModel");
 const LawyerModel = require("../models/LawyerModel");
 const mailUtil = require("../utils/MailUtil")
 
+
 // const addAppointment = async(req,res) =>{
 
 //   try{
@@ -309,7 +310,59 @@ const addAppointment = async (req, res) => {
 };
 
 
+
+
+const getPaymentsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const appointments = await appointmentModel.find({ userId })
+      .populate("lawyerId", "name specialization")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    console.error("Error fetching payments:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch payments" });
+  }
+};
+
+
+
+// API to update appointment after successful payment
+const updateAfterPayment = async (req, res) => {
+  try {
+    const {
+      appointmentId,
+      razorpay_order_id,
+      razorpay_payment_id,
+      amount,
+    } = req.body;
+
+    const updatedAppointment = await appointmentModel.findByIdAndUpdate(
+      appointmentId,
+      {
+        razorpay_order_id,
+        razorpay_payment_id,
+        amount,
+        paymentStatus: "Completed",
+      },
+      { new: true }
+    ).populate("lawyerId userId");
+
+    res.json({ success: true, data: updatedAppointment });
+  } catch (err) {
+    console.error("Payment update error:", err);
+    res.status(500).json({ success: false, message: "Failed to update payment" });
+  }
+};
+
+module.exports = {
+  // ... your other functions
+  updateAfterPayment,
+};
+
   
 module.exports = {
-    addAppointment,getAllAppointment,deleteAppointment,getAllAppointmentsByUserId,updateAppointment,getAppointmentById,getAllAppointmentsByLawyerId,updateAppointmentStatus
+    addAppointment,getAllAppointment,deleteAppointment,getAllAppointmentsByUserId,updateAppointment,getAppointmentById,getAllAppointmentsByLawyerId,updateAppointmentStatus,getPaymentsByUserId,updateAfterPayment
 }

@@ -38,6 +38,12 @@ app.use(contactUsRoutes)
 const reviewRoutes = require("./src/routes/ReviewRoutes")
 app.use(reviewRoutes)
 
+const paymentRoutes = require("./src/routes/PaymentRoutes")
+app.use(paymentRoutes) 
+
+const adminRoutes = require("./src/routes/AdminRoutes")
+app.use(adminRoutes) 
+
 mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
     console.log("database connected...")
 })

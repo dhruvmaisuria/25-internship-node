@@ -24,15 +24,29 @@ const upload = multer({
     storage:storage,
 }).single("image");
 
-const getLawyerData = async(req,res)=>{
+const getLawyerData = async (req, res) => {
+    try {
+        const lawyers = await LawyerModel.find().populate("roleId");
 
-    const lawyers = await LawyerModel.find().populate("roleId");
+        if (!lawyers || lawyers.length === 0) {
+            return res.status(404).json({
+                message: "No lawyers found",
+                data: null
+            });
+        }
 
-    res.json({
-        message:"lawyer Data fetched successfully.... ",
-        data:lawyers
-    })
-}
+        res.status(200).json({
+            message: "Lawyer data fetched successfully",
+            data: lawyers
+        });
+    } catch (error) {
+        console.error("Error fetching lawyers:", error);
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message
+        });
+    }
+};
 
 
 const lawyerLogin = async (req,res) =>{
@@ -163,31 +177,22 @@ const deleteLawyer = async(req,res)=>{
 
 const getLawyerById = async (req, res) => {
     try {
-        const foundLawyer = await LawyerModel.findById(req.params.id);
-
-        if (!foundLawyer) {
-            return res.status(404).json({
-                message: "Lawyer not found",
-                data: null
-            });
-        }
-
-        res.json({
-            message: "Lawyer fetched successfully",
-            data: { 
-                _id: foundLawyer._id, 
-                name: foundLawyer.name, 
-                experience: foundLawyer.experience 
-            }
-        });
+      const lawyer = await LawyerModel.findById(req.params.id);
+      if (!lawyer) {
+        return res.status(404).json({ message: "Lawyer not found" });
+      }
+  
+      res.status(200).json({
+        message: "Lawyer fetched successfully",
+        data: lawyer
+      });
     } catch (error) {
-        console.error("Error fetching lawyer:", error);
-        res.status(500).json({
-            message: "Server Error",
-            error: error.message
-        });
+      res.status(500).json({
+        message: "Error fetching lawyer",
+        error: error.message
+      });
     }
-};
+  };
 
 
 
@@ -256,10 +261,45 @@ const getLawyersBySpecialization = async (req, res) => {
       });
       res.json({
           message:"password updated successfully.."
-      });
+      });  
   
   }
 
+  const getTopRatedLawyers = async (req, res) => {
+    try {
+        const topLawyers = await LawyerModel.find()
+            .sort({ rating: -1, ratingCount: -1 })
+            .limit(3);
+
+        if (!topLawyers || topLawyers.length === 0) {
+            return res.status(404).json({
+                message: "No top-rated lawyers found",
+                data: []
+            });
+        }
+
+        // Only sending relevant info
+        const formattedData = topLawyers.map(lawyer => ({
+            _id: lawyer._id,
+            name: lawyer.name,
+            specialization: lawyer.specialization,
+            rating: lawyer.rating,
+            imageURL: lawyer.imageURL
+        }));
+
+        res.json({
+            message: "Top-rated lawyers fetched successfully",
+            data: formattedData
+        });
+    } catch (error) {
+        console.error("Error fetching top-rated lawyers:", error);
+        res.status(500).json({
+            message: "Server Error",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
-    getLawyerData,deleteLawyer,getLawyerById,lawyerLogin,signupLawyer,signupLawyerWithFile,getLawyersBySpecialization,forgotPassword,resetPassword
+    getLawyerData,deleteLawyer,getLawyerById,lawyerLogin,signupLawyer,signupLawyerWithFile,getLawyersBySpecialization,forgotPassword,resetPassword,getTopRatedLawyers
 }   

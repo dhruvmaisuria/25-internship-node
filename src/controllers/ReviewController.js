@@ -1,5 +1,5 @@
 const reviewModel = require("../models/ReviewModel");
-const lawyerModel = require("../models/LawyerModel");
+const LawyerModel = require("../models/LawyerModel");
 
 
 // const addReview = async (req, res) => {
@@ -18,10 +18,10 @@ const lawyerModel = require("../models/LawyerModel");
 const addReview = async (req, res) => {
   try {
     // Step 1: Create the review in the database
-    const savedReview = await reviewModel.create(req.body);
+    const savedReview = (await reviewModel.create(req.body));
 
     // Step 2: Update the lawyer's rating
-    const lawyer = await lawyerModel.findById(req.body.lawyerId);
+    const lawyer = await LawyerModel.findById(req.body.lawyerId);
     if (!lawyer) {
       return res.status(404).json({ message: "Lawyer not found" });
     }
@@ -31,7 +31,7 @@ const addReview = async (req, res) => {
     const newAverageRating = (lawyer.rating * lawyer.ratingCount + req.body.rating) / newRatingCount;
 
     // Step 4: Update the lawyer's rating and count in the database
-    await lawyerModel.findByIdAndUpdate(req.body.lawyerId, {
+    await LawyerModel.findByIdAndUpdate(req.body.lawyerId, {
       rating: newAverageRating.toFixed(1), // Round to 1 decimal place
       ratingCount: newRatingCount,
     });
@@ -133,11 +133,35 @@ const getReviewById = async (req, res) => {
   };
 
 
+  const getReviewsByLawyerId = async (req, res) => {
+    try {
+      const lawyerId = req.params.lawyerId;
+      const reviews = await reviewModel
+        .find({ lawyerId })
+        .populate("userId", "firstName email")  // Show user info
+        .sort({ createdAt: -1 }); // Optional: Latest first
+  
+      if (reviews.length === 0) {
+        return res.status(200).json({
+          message: "No reviews found for this lawyer",
+          data: [],
+        });
+      }
+  
+      res.status(200).json({
+        message: "Reviews fetched successfully",
+        data: reviews,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  };
+  
 
 
 
 
 
 module.exports={
-    addReview,getAllReview,deleteReview,getReviewById,getAllReviewsByUserId,updateReview
+    addReview,getAllReview,deleteReview,getReviewById,getAllReviewsByUserId,updateReview,getReviewsByLawyerId
 }

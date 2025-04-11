@@ -39,7 +39,13 @@ const lawyersSchema = new Schema({
     imageURL:{
         type:String,
         required:true
-    }
+    },
+    reviews: [
+        {
+          comment: String,
+          createdAt: { type: Date, default: Date.now }
+        }
+      ]
    
 })
 

@@ -10,6 +10,9 @@ routes.put("/updateAppointment/:id",appointmentController.updateAppointment);
 routes.get("/getAppointmentById/:id",appointmentController.getAppointmentById);
 routes.get("/appointmentByLawyerId/:lawyerId",appointmentController.getAllAppointmentsByLawyerId);
 routes.put("/updateAppointmentStatus/:id",appointmentController.updateAppointmentStatus);
+routes.get("/appointment/payments/:userId",appointmentController.getPaymentsByUserId)
+routes.put("/appointment/confirmPayment",appointmentController.updateAfterPayment);
+
 
 
 module.exports = routes

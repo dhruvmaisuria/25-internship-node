@@ -45,6 +45,19 @@ const appointmentSchema = new Schema({
         default: "Pending",
       },
 
+    amount: {
+        type: Number,
+        default: 0,
+      },
+    
+    razorpay_order_id: {
+        type: String,
+      },
+    
+    razorpay_payment_id: {
+        type: String,
+      },  
+
 },{timestamps: true});
 
 module.exports = mongoose.model('appointments',appointmentSchema)

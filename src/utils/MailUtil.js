@@ -5,13 +5,13 @@ const sendingMail = async(to,subject,text) =>{
     const transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
-            user:"veerraar325@gmail.com",
-            pass:"cxro obte apmi dmsm"
+            user:"legalconsultationteam@gmail.com",
+            pass:"jmkg djfc fmti xefs"
         }
     })
 
     const mailOptions = {
-        from: 'veerraar325@gmail.com',
+        from: 'legalconsultationteam@gmail.com',
         to: to,
         subject: subject,
         text: text
@@ -27,13 +27,13 @@ const forgotSendingMail = async(to,subject,text) =>{
     const transporter = mailer.createTransport({
         service: 'gmail',
         auth: {
-            user:"veerraar325@gmail.com",
-            pass:"cxro obte apmi dmsm"
+            user:"legalconsultationteam@gmail.com",
+            pass:"jmkg djfc fmti xefs"
         }
     })
 
     const mailOptions = {
-        from: 'veeraar325@gmail.com',
+        from: 'legalconsultationteam@gmail.com',
         to: to,
         subject: subject,
         html:text

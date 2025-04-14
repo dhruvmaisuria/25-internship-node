@@ -1,5 +1,6 @@
 const Razorpay = require("razorpay");
 const bodyParser = require("body-parser");
+const AppointmentModel = require("../models/AppointmentModel");
 
 
 // Razorpay instance
@@ -28,7 +29,7 @@ const create_order =async (req, res) => {
   }
 };
 
-// API to verify the payment signature (optional for backend verification)
+//API to verify the payment signature (optional for backend verification)
 const verify_order = async (req, res) => {
   const crypto = require("crypto");
 
@@ -46,6 +47,46 @@ const verify_order = async (req, res) => {
     res.status(400).json({ status: "failure" });
   }
 };
+
+
+// const verify_order = async (req, res) => {
+//   const crypto = require("crypto");
+ 
+
+//   const {
+//     razorpay_order_id,
+//     razorpay_payment_id,
+//     razorpay_signature,
+//     appointmentId,
+//   } = req.body;
+
+//   const secret = "T88p96PnHoJofjrsX5Ki28o4";
+
+//   const hash = crypto
+//     .createHmac("sha256", secret)
+//     .update(razorpay_order_id + "|" + razorpay_payment_id)
+//     .digest("hex");
+
+//   console.log("Hash:", hash, "Signature:", razorpay_signature);
+
+//   if (hash === razorpay_signature) {
+//     try {
+//       // ✅ Update appointment with payment details
+//       await AppointmentModel.findByIdAndUpdate(appointmentId, {
+//         razorpay_order_id,
+//         razorpay_payment_id,
+//         payment_verified: true,
+//       });
+
+//       res.json({ status: "success", message: "Payment verified and appointment updated." });
+//     } catch (error) {
+//       console.error("DB update error:", error);
+//       res.status(500).json({ status: "error", message: "Failed to update appointment." });
+//     }
+//   } else {
+//     res.status(400).json({ status: "failure", message: "Payment signature mismatch" });
+//   }
+// };
 
 module.exports = {
     create_order,

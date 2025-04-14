@@ -40,6 +40,11 @@ const lawyersSchema = new Schema({
         type:String,
         required:true
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+      },
+      
     reviews: [
         {
           comment: String,

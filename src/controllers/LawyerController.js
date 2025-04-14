@@ -49,36 +49,78 @@ const getLawyerData = async (req, res) => {
 };
 
 
-const lawyerLogin = async (req,res) =>{
+// const lawyerLogin = async (req,res) =>{
 
 
-    const email = req.body.email;
-    const password = req.body.password;
+//     const email = req.body.email;
+//     const password = req.body.password;
 
-    const foundLawyerFromEmail = await LawyerModel.findOne({email: email}).populate("roleId");
-    console.log(foundLawyerFromEmail);
+//     const foundLawyerFromEmail = await LawyerModel.findOne({email: email}).populate("roleId");
+//     console.log(foundLawyerFromEmail);
 
-    if(foundLawyerFromEmail != null){
+//     if(foundLawyerFromEmail != null){
         
-        const isMatch = bcrypt.compareSync(password,foundLawyerFromEmail.password);
+//         const isMatch = bcrypt.compareSync(password,foundLawyerFromEmail.password);
 
-        if(isMatch == true){
-            res.status(200).json({
-                message:"login successfully",
-                data:foundLawyerFromEmail
-            });
+//         if(isMatch == true){
+//             res.status(200).json({
+//                 message:"login successfully",
+//                 data:foundLawyerFromEmail
+//             });
 
-        }else{
-            res.status(404).json({
-                message:"invalid cred....",
-            });
-        }
-    }else{
-        res.status(404).json({
-            message:"Email not found..."
+//         }else{
+//             res.status(404).json({
+//                 message:"invalid cred....",
+//             });
+//         }
+//     }else{
+//         res.status(404).json({
+//             message:"Email not found..."
+//         });
+//     }
+// };
+
+
+
+const lawyerLogin = async (req, res) => {
+    const { email, password } = req.body;
+  
+    try {
+      const foundLawyer = await LawyerModel.findOne({ email }).populate("roleId");
+  
+      if (!foundLawyer) {
+        return res.status(404).json({
+          message: "Email not found...",
         });
+      }
+  
+      // ✅ Check if the lawyer is blocked
+      if (foundLawyer.isBlocked) {
+        return res.status(403).json({
+          message: "Your account has been blocked by admin.",
+        });
+      }
+  
+      const isMatch = bcrypt.compareSync(password, foundLawyer.password);
+  
+      if (isMatch) {
+        return res.status(200).json({
+          message: "Login successfully",
+          data: foundLawyer,
+        });
+      } else {
+        return res.status(401).json({
+          message: "Invalid credentials...",
+        });
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      return res.status(500).json({
+        message: "Something went wrong, please try again later.",
+      });
     }
-};
+  };
+  
 
 
 

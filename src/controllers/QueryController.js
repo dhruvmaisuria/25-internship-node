@@ -5,7 +5,7 @@ const getAllQueries = async (req, res) => {
   try {
     const queries = await queryModel
       .find()
-      .populate("userId", "firstName email"); // Fetch user details
+      .populate("userId", "firstName lastName email"); // Fetch user details
       
 
     res.status(200).json({

@@ -22,8 +22,13 @@ const usersSchema = new Schema({
     roleId:{
         type:Schema.Types.ObjectId,
         ref:"roles"
-    }
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
+      }
+      
    
-})
+},{timestamps:true})
 
 module.exports = mongoose.model("users",usersSchema)

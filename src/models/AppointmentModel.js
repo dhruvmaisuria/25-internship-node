@@ -58,6 +58,11 @@ const appointmentSchema = new Schema({
         type: String,
       },  
 
+    payment_verified: {
+         type: Boolean, 
+         default: false 
+      },  
+
 },{timestamps: true});
 
 module.exports = mongoose.model('appointments',appointmentSchema)

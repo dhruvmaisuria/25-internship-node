@@ -17,36 +17,75 @@ const getUserData = async(req,res)=>{
 }
 
 
-const loginUser = async (req,res) =>{
+// const loginUser = async (req,res) =>{
 
 
+//     const email = req.body.email;
+//     const password = req.body.password;
+
+//     const foundUserFromEmail = await userModel.findOne({email: email}).populate("roleId");
+//     console.log(foundUserFromEmail);
+
+//     if(foundUserFromEmail != null){
+        
+//         const isMatch = bcrypt.compareSync(password,foundUserFromEmail.password);
+
+//         if(isMatch == true){
+//             res.status(200).json({
+//                 message:"login successfully",
+//                 data:foundUserFromEmail
+//             });
+
+//         }else{
+//             res.status(404).json({
+//                 message:"invalid cred....",
+//             });
+//         }
+//     }else{
+//         res.status(404).json({
+//             message:"Email not found..."
+//         });
+//     }
+// };
+
+
+const loginUser = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-
-    const foundUserFromEmail = await userModel.findOne({email: email}).populate("roleId");
+  
+    const foundUserFromEmail = await userModel.findOne({ email: email }).populate("roleId");
     console.log(foundUserFromEmail);
-
-    if(foundUserFromEmail != null){
-        
-        const isMatch = bcrypt.compareSync(password,foundUserFromEmail.password);
-
-        if(isMatch == true){
-            res.status(200).json({
-                message:"login successfully",
-                data:foundUserFromEmail
-            });
-
-        }else{
-            res.status(404).json({
-                message:"invalid cred....",
-            });
-        }
-    }else{
-        res.status(404).json({
-            message:"Email not found..."
+  
+    if (foundUserFromEmail != null) {
+  
+      // 🔒 Check if user is blocked
+      if (foundUserFromEmail.isBlocked) {
+        return res.status(403).json({
+          success: false,
+          message: "Your account has been blocked by the admin.",
         });
+      }
+  
+      const isMatch = bcrypt.compareSync(password, foundUserFromEmail.password);
+  
+      if (isMatch === true) {
+        res.status(200).json({
+          message: "Login successfully",
+          data: foundUserFromEmail
+        });
+      } else {
+        res.status(401).json({
+          message: "Invalid credentials.",
+        });
+      }
+  
+    } else {
+      res.status(404).json({
+        message: "Email not found.",
+      });
     }
-};
+  };
+  
 
 
 

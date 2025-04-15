@@ -436,9 +436,60 @@ const deleteReview = async (req, res) => {
 };
 
 
+getUserRetentionStats = async (req, res) => {
+  try {
+    const totalUsers = await userModel.countDocuments();
+    const usersWithBookings = await appointmentModel.distinct("userId");
+    const completedUsers = await appointmentModel.find({ status: "Confirmed" }).distinct("userId");
+
+    const stats = [
+      { stage: "Signed Up", count: totalUsers },
+      { stage: "Booked Appointment", count: usersWithBookings.length },
+      { stage: "Confirm Appointment", count: completedUsers.length },
+    ];
+
+    res.status(200).json({ success: true, data: stats });
+  } catch (err) {
+    console.error("User Retention Stats Error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+getLawyerRatingStats = async (req, res) => {
+  try {
+    const ratings = await reviewModel.aggregate([
+      {
+        $group: {
+          _id: "$lawyerId",
+          avgRating: { $avg: "$rating" }
+        }
+      },
+      {
+        $lookup: {
+          from: "lawyers",
+          localField: "_id",
+          foreignField: "_id",
+          as: "lawyer"
+        }
+      },
+      { $unwind: "$lawyer" },
+      {
+        $project: {
+          lawyerName: "$lawyer.name",
+          rating: { $round: ["$avgRating", 1] }
+        }
+      }
+    ]);
+
+    res.status(200).json({ success: true, data: ratings });
+  } catch (err) {
+    console.error("Lawyer Rating Stats Error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 
 
 module.exports = {
-  getAdminStats,getChartData,getLawyerAppointmentsStats,getUserSignupStats,getAppointmentStatusStats,getAppointmentsForCalendars,getAppointmentsForCalendar, getAllUsers,toggleUserBlock,deleteUser,deleteLawyer,toggleLawyerBlock,getAllLawyers,getAllPayments,adminSignup,adminLogin,getAllReviews,deleteReview
+  getAdminStats,getChartData,getLawyerAppointmentsStats,getUserSignupStats,getAppointmentStatusStats,getAppointmentsForCalendars,getAppointmentsForCalendar, getAllUsers,toggleUserBlock,deleteUser,deleteLawyer,toggleLawyerBlock,getAllLawyers,getAllPayments,adminSignup,adminLogin,getAllReviews,deleteReview,getUserRetentionStats,getLawyerRatingStats
 };

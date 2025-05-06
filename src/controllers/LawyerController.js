@@ -8,8 +8,8 @@ const mailUtil = require("../utils/MailUtil");
 
 const jwt = require("jsonwebtoken")
 
-const secret = "secret";
-
+require('dotenv').config();
+const secret = process.env.JWT_SECRET;
 
 
 const storage = multer.diskStorage({

@@ -1,12 +1,13 @@
 const Razorpay = require("razorpay");
 const bodyParser = require("body-parser");
 const AppointmentModel = require("../models/AppointmentModel");
+require('dotenv').config();
 
 
 // Razorpay instance
 const razorpay = new Razorpay({
-  key_id: "rzp_test_kiBRyyCS7A1LxN",
-  key_secret: "T88p96PnHoJofjrsX5Ki28o4",
+  key_id:process.env.RAZORPAY_KEY_ID,
+  key_secret:process.env.RAZORPAY_KEY_SECRET
 });
 
 // API to create an order

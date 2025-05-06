@@ -9,7 +9,8 @@ const queryModel = require("../models/QueriesModel")
 const jwt = require("jsonwebtoken")
 const multer = require("multer");
 
-const secret = "secret";
+require('dotenv').config();
+const secret = process.env.JWT_SECRET;
 
 
 

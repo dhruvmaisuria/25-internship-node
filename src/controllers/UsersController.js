@@ -4,7 +4,8 @@ const mailUtil = require("../utils/MailUtil");
 const { JsonWebTokenError } = require("jsonwebtoken");
 const jwt = require("jsonwebtoken")
 
-const secret = "secret";
+require('dotenv').config();
+const secret = process.env.JWT_SECRET;
 
 const getUserData = async(req,res)=>{
 

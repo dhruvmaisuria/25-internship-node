@@ -22,4 +22,6 @@ routes.get("/admin/getAllReviews",adminController.getAllReviews)
 routes.delete("/admin/deleteReview/:id",adminController.deleteReview)
 routes.get("/admin/userRetentionStats",adminController.getUserRetentionStats)
 routes.get("/admin/lawyerRatingStats",adminController.getLawyerRatingStats)
+routes.post("/admin/forgotPassword",adminController.forgotPassword)
+routes.post("/admin/resetPassword",adminController.resetPassword)
 module.exports = routes;

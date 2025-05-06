@@ -6,6 +6,10 @@ const bcrypt = require("bcrypt")
 const mailUtil = require("../utils/MailUtil");
 const reviewModel = require("../models/ReviewModel")
 const queryModel = require("../models/QueriesModel")
+const jwt = require("jsonwebtoken")
+const multer = require("multer");
+
+const secret = "secret";
 
 
 
@@ -488,8 +492,56 @@ getLawyerRatingStats = async (req, res) => {
   }
 };
 
+const forgotPassword = async(req,res) =>{
+  
+      const email = req.body.email;
+      const foundAdmin  = await adminModel.findOne({email : email});
+  
+      if(foundAdmin != null) {
+  
+         const token = jwt.sign(foundAdmin.toObject(),secret,{ expiresIn: "1h" });
+         console.log(token);
+         const url = `http://localhost:5173/adminResetPassword/${token}`;
+         const mailContent = `
+        <html>
+          <body>
+            <p>You requested a password reset. Click the link below:</p>
+            <a href="${url}" style="display:inline-block; padding:10px 20px; background-color:#007bff; color:#ffffff; text-decoration:none; border-radius:5px;">Reset Password</a>
+            <p>If you did not request this, please ignore this email.</p>
+          </body>
+        </html>`;
+         
+         await mailUtil.forgotSendingMail(foundAdmin.email, "reset password" , mailContent);
+         res.status(200).json({
+          message:"reset password link sent to your mail"
+         }); 
+  
+      }else {
+          res.status(404).json({
+              message:"Email not found..."
+          });
+      }
+  };
 
+  const resetPassword = async(req,res)=>{
+        const token = req.body.token;
+        const newPassword = req.body.password;
+    
+        const adminFromToken = jwt.verify(token,secret);
+    
+    
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(newPassword,salt)
+    
+        const updateAdmin = await adminModel.findByIdAndUpdate(adminFromToken._id, {
+            password:hashedPassword,
+        });
+        res.json({
+            message:"password updated successfully.."
+        });  
+    
+    }
 
 module.exports = {
-  getAdminStats,getChartData,getLawyerAppointmentsStats,getUserSignupStats,getAppointmentStatusStats,getAppointmentsForCalendars,getAppointmentsForCalendar, getAllUsers,toggleUserBlock,deleteUser,deleteLawyer,toggleLawyerBlock,getAllLawyers,getAllPayments,adminSignup,adminLogin,getAllReviews,deleteReview,getUserRetentionStats,getLawyerRatingStats
+  getAdminStats,getChartData,getLawyerAppointmentsStats,getUserSignupStats,getAppointmentStatusStats,getAppointmentsForCalendars,getAppointmentsForCalendar, getAllUsers,toggleUserBlock,deleteUser,deleteLawyer,toggleLawyerBlock,getAllLawyers,getAllPayments,adminSignup,adminLogin,getAllReviews,deleteReview,getUserRetentionStats,getLawyerRatingStats,forgotPassword,resetPassword
 };

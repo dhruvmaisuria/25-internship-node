@@ -20,7 +20,7 @@ require('dotenv').config();
 
 const app = express()
 app.use(cors({
-    origin: "https://buyer-talk.vercel.app",
+    origin: "https://legal-consultation-market-place.vercel.app",
     credentials: true
   }));
 app.use(express.json())

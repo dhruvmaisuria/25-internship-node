@@ -8,215 +8,215 @@
 
 
 
-// const express = require("express")
-// const mongoose = require("mongoose")
+const express = require("express")
+const mongoose = require("mongoose")
 
-// const cors = require("cors")
-// require('dotenv').config();
+const cors = require("cors")
+require('dotenv').config();
 
-// // const app =express()
-// // app.use(cors())
-// // app.use(express.json())
-
-// const app = express()
-// app.use(cors({
-//     origin: "https://legal-consultation-market-place.vercel.app",
-//     credentials: true
-//   }));
+// const app =express()
+// app.use(cors())
 // app.use(express.json())
 
-// // router.post("/user", (req, res) => {
-// //     console.log("Received data:", req.body); // Log the incoming data
+const app = express()
+app.use(cors({
+    origin: "https://legal-consultation-market-place.vercel.app",
+    credentials: true
+  }));
+app.use(express.json())
 
-// //     // Mock response
-// //     res.status(201).json({ message: "User data received", data: req.body });
-// // });
+// router.post("/user", (req, res) => {
+//     console.log("Received data:", req.body); // Log the incoming data
 
-// const roleRoutes = require("./src/routes/RoleRoutes")
-// app.use(roleRoutes)
-
-// const userRoutes = require("./src/routes/UsersRoutes")
-// app.use(userRoutes)
-
-// const lawyerRoutes = require("./src/routes/LawyerRoutes")
-// app.use(lawyerRoutes)
-
-// const appointmentRoutes = require("./src/routes/AppointmentRoutes")
-// app.use(appointmentRoutes)
-
-// const queryRoutes = require("./src/routes/QueryRoutes")
-// app.use(queryRoutes)
-
-// const contactUsRoutes = require("./src/routes/ContactUsRoutes")
-// app.use(contactUsRoutes)
-
-// const reviewRoutes = require("./src/routes/ReviewRoutes")
-// app.use(reviewRoutes)
-
-// const paymentRoutes = require("./src/routes/PaymentRoutes")
-// app.use(paymentRoutes) 
-
-// const adminRoutes = require("./src/routes/AdminRoutes");
-// // const router = require("./src/routes/PaymentRoutes");
-// app.use(adminRoutes) 
-
-// // mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
-// //     console.log("database connected...")
-// // })
-
-
-// const mongoURI = process.env.MONGO_URI;
-// console.log("Connecting to MongoDB URI:", mongoURI);
-
-// mongoose.connect(mongoURI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-// })
-// .then(() => {
-//     console.log("Database connected...");
-// })
-// .catch((err) => {
-//     console.error("MongoDB connection error:", err);
+//     // Mock response
+//     res.status(201).json({ message: "User data received", data: req.body });
 // });
 
-// app.get('/', (req, res) => {
-//     res.send('Legal Consultation Marketplace backend is running ✅');
-//   });
+const roleRoutes = require("./src/routes/RoleRoutes")
+app.use(roleRoutes)
 
+const userRoutes = require("./src/routes/UsersRoutes")
+app.use(userRoutes)
 
-// app.get('/ping', (req, res) => {
-//     res.send('pong');
-//   });
+const lawyerRoutes = require("./src/routes/LawyerRoutes")
+app.use(lawyerRoutes)
 
-// app.get("/test",(req,res)=>{
-//     res.send("hello test api called")
-// })
+const appointmentRoutes = require("./src/routes/AppointmentRoutes")
+app.use(appointmentRoutes)
 
+const queryRoutes = require("./src/routes/QueryRoutes")
+app.use(queryRoutes)
 
+const contactUsRoutes = require("./src/routes/ContactUsRoutes")
+app.use(contactUsRoutes)
 
-// app.get("/user",(req,res)=>{
-//     res.json({
-//         message:"user api called..",
-//         data:["dhruv","vatsal","raj"]
-//     })
-// })
+const reviewRoutes = require("./src/routes/ReviewRoutes")
+app.use(reviewRoutes)
 
-// app.get("/employee",(req,res)=>{
-//     res.json({
-//         message:"employee api called..",
-//         data:[{name:"Dhruv",age:22,mobile_no:9924939512,salary:100},{name:"Vatsal",age:21,mobile_no:9924939556,salary:1000000},{name:"Raj",age:20,mobile_no:9737026559,salary:10000}]
-//     })
-// })
+const paymentRoutes = require("./src/routes/PaymentRoutes")
+app.use(paymentRoutes) 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const PORT =3010
-// app.listen(PORT,()=>{
-//     console.log("Server started on port number  ",PORT)
-// })
-
-
-
-
-
-
-
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
-
-const app = express();
-
-// ✅ Middlewares
-app.use(cors({
-  origin: "https://legal-consultation-market-place.vercel.app",
-  credentials: true
-}));
-app.use(express.json());
-
-// ✅ Routes
-const roleRoutes = require("./src/routes/RoleRoutes");
-const userRoutes = require("./src/routes/UsersRoutes");
-const lawyerRoutes = require("./src/routes/LawyerRoutes");
-const appointmentRoutes = require("./src/routes/AppointmentRoutes");
-const queryRoutes = require("./src/routes/QueryRoutes");
-const contactUsRoutes = require("./src/routes/ContactUsRoutes");
-const reviewRoutes = require("./src/routes/ReviewRoutes");
-const paymentRoutes = require("./src/routes/PaymentRoutes");
 const adminRoutes = require("./src/routes/AdminRoutes");
+// const router = require("./src/routes/PaymentRoutes");
+app.use(adminRoutes) 
 
-// ✅ Use routes with prefixes (better API structure)
-app.use("/api/roles", roleRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/lawyers", lawyerRoutes);
-app.use("/api/appointments", appointmentRoutes);
-app.use("/api/queries", queryRoutes);
-app.use("/api/contact", contactUsRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/admin", adminRoutes);
+// mongoose.connect("mongodb://127.0.0.1:27017/25_node_internship").then(()=>{
+//     console.log("database connected...")
+// })
 
-// ✅ MongoDB connection
+
 const mongoURI = process.env.MONGO_URI;
 console.log("Connecting to MongoDB URI:", mongoURI);
 
 mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
-.then(() => console.log("Database connected..."))
-.catch((err) => console.error("MongoDB connection error:", err));
-
-// ✅ Test routes
-app.get("/", (req, res) => {
-  res.send("Legal Consultation Marketplace backend is running ✅");
+.then(() => {
+    console.log("Database connected...");
+})
+.catch((err) => {
+    console.error("MongoDB connection error:", err);
 });
 
-app.get("/ping", (req, res) => {
-  res.send("pong");
-});
-
-app.get("/test", (req, res) => {
-  res.send("hello test api called");
-});
-
-app.get("/user", (req, res) => {
-  res.json({
-    message: "user api called..",
-    data: ["dhruv", "vatsal", "raj"]
+app.get('/', (req, res) => {
+    res.send('Legal Consultation Marketplace backend is running ✅');
   });
-});
 
-app.get("/employee", (req, res) => {
-  res.json({
-    message: "employee api called..",
-    data: [
-      { name: "Dhruv", age: 22, mobile_no: 9924939512, salary: 100 },
-      { name: "Vatsal", age: 21, mobile_no: 9924939556, salary: 1000000 },
-      { name: "Raj", age: 20, mobile_no: 9737026559, salary: 10000 }
-    ]
+
+app.get('/ping', (req, res) => {
+    res.send('pong');
   });
-});
 
-// ✅ Start server
-const PORT = process.env.PORT || 3010;
-app.listen(PORT, () => {
-  console.log("Server started on port", PORT);
-});
+app.get("/test",(req,res)=>{
+    res.send("hello test api called")
+})
+
+
+
+app.get("/user",(req,res)=>{
+    res.json({
+        message:"user api called..",
+        data:["dhruv","vatsal","raj"]
+    })
+})
+
+app.get("/employee",(req,res)=>{
+    res.json({
+        message:"employee api called..",
+        data:[{name:"Dhruv",age:22,mobile_no:9924939512,salary:100},{name:"Vatsal",age:21,mobile_no:9924939556,salary:1000000},{name:"Raj",age:20,mobile_no:9737026559,salary:10000}]
+    })
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const PORT =3010
+app.listen(PORT,()=>{
+    console.log("Server started on port number  ",PORT)
+})
+
+
+
+
+
+
+
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const cors = require("cors");
+// require("dotenv").config();
+
+// const app = express();
+
+// // ✅ Middlewares
+// app.use(cors({
+//   origin: "https://legal-consultation-market-place.vercel.app",
+//   credentials: true
+// }));
+// app.use(express.json());
+
+// // ✅ Routes
+// const roleRoutes = require("./src/routes/RoleRoutes");
+// const userRoutes = require("./src/routes/UsersRoutes");
+// const lawyerRoutes = require("./src/routes/LawyerRoutes");
+// const appointmentRoutes = require("./src/routes/AppointmentRoutes");
+// const queryRoutes = require("./src/routes/QueryRoutes");
+// const contactUsRoutes = require("./src/routes/ContactUsRoutes");
+// const reviewRoutes = require("./src/routes/ReviewRoutes");
+// const paymentRoutes = require("./src/routes/PaymentRoutes");
+// const adminRoutes = require("./src/routes/AdminRoutes");
+
+// // ✅ Use routes with prefixes (better API structure)
+// app.use("/api/roles", roleRoutes);
+// app.use("/api/users", userRoutes);
+// app.use("/api/lawyers", lawyerRoutes);
+// app.use("/api/appointments", appointmentRoutes);
+// app.use("/api/queries", queryRoutes);
+// app.use("/api/contact", contactUsRoutes);
+// app.use("/api/reviews", reviewRoutes);
+// app.use("/api/payments", paymentRoutes);
+// app.use("/api/admin", adminRoutes);
+
+// // ✅ MongoDB connection
+// const mongoURI = process.env.MONGO_URI;
+// console.log("Connecting to MongoDB URI:", mongoURI);
+
+// mongoose.connect(mongoURI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+// .then(() => console.log("Database connected..."))
+// .catch((err) => console.error("MongoDB connection error:", err));
+
+// // ✅ Test routes
+// app.get("/", (req, res) => {
+//   res.send("Legal Consultation Marketplace backend is running ✅");
+// });
+
+// app.get("/ping", (req, res) => {
+//   res.send("pong");
+// });
+
+// app.get("/test", (req, res) => {
+//   res.send("hello test api called");
+// });
+
+// app.get("/user", (req, res) => {
+//   res.json({
+//     message: "user api called..",
+//     data: ["dhruv", "vatsal", "raj"]
+//   });
+// });
+
+// app.get("/employee", (req, res) => {
+//   res.json({
+//     message: "employee api called..",
+//     data: [
+//       { name: "Dhruv", age: 22, mobile_no: 9924939512, salary: 100 },
+//       { name: "Vatsal", age: 21, mobile_no: 9924939556, salary: 1000000 },
+//       { name: "Raj", age: 20, mobile_no: 9737026559, salary: 10000 }
+//     ]
+//   });
+// });
+
+// // ✅ Start server
+// const PORT = process.env.PORT || 3010;
+// app.listen(PORT, () => {
+//   console.log("Server started on port", PORT);
+// });
